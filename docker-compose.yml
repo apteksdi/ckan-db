@@ -1,0 +1,34 @@
+# docker-compose build && docker-compose up -d
+version: "3"
+
+volumes:
+  pg_data:
+
+services:
+  db:
+    container_name: db
+    build:
+      context: compose
+      dockerfile: postgresql/Dockerfile
+      args:
+        - DS_RO_PASS=${DATASTORE_READONLY_PASSWORD}
+        - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    environment:
+      - DS_RO_PASS=${DATASTORE_READONLY_PASSWORD}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "ckan"]
+
+  pgadmin:
+    container_name: pgadmin4_container
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: aptek1_pgadmin@data.go.id
+      PGADMIN_DEFAULT_PASSWORD: NL-EDR*XfC]6R#^=
+    ports:
+      - "5050:80"
